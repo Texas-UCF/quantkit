@@ -1,0 +1,8 @@
+Package: quantkit
+Title: Quantitative analysis for financial markets
+Version: 0.0.1
+Authors@R: person("Texas", "Undergraduate Computational Finance", email = "exec@texasucf.com", role = c("aut", "cre"))
+Description: This package is managed by students in Undergraduate Computational Finance, an organization at The University of Texas at Austin. It provides functionality for quantitative analysis of financial products.
+Depends: R (>= 3.2.1)
+License: MIT license
+LazyData: true
