@@ -2,7 +2,7 @@
 
 export(FilterComponents)
 export(ReturnMoments)
-importFrom(moments,"skewness,")
 importFrom(moments,kurtosis)
-importFrom(quantmod,"getSymbols,")
+importFrom(moments,skewness)
 importFrom(quantmod,dailyReturn)
+importFrom(quantmod,getSymbols)

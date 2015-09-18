@@ -7,7 +7,7 @@
 #' @param end End date
 #' @return List of filtered out time series and regression results
 #' @keywords regression, components
-#' @importFrom quantmod getSymbols, dailyReturn
+#' @importFrom quantmod getSymbols dailyReturn
 #' @export
 #' @examples
 #' FilterComponents("XOM", c("^GSPC", "USO"), 0.05, '2015-01-01', '2015-05-25')

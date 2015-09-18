@@ -5,8 +5,8 @@
 #' @param end End date
 #' @return vector of mean, SD, skewness, kurtosis
 #' @keywords moments
-#' @importFrom quantmod getSymbols, dailyReturn
-#' @importFrom moments skewness, kurtosis
+#' @importFrom quantmod getSymbols dailyReturn
+#' @importFrom moments skewness kurtosis
 #' @export
 #' @examples
 #' ReturnMoments("TSLA", '2015-01-01', '2015-05-25')
