@@ -22,8 +22,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   getSymbols(components, src='yahoo', from=start, to=end, env=componentData, warnings = F)
   
   # Use quantmod to calculate returns (use arithmetic daily returns)
-  stockData <- get(ticker, tickerData)
-  tickerReturns <- dailyReturn(stockData)
+  tickerReturns <- dailyReturn(get(ticker, tickerData))
   colnames(tickerReturns) <- ticker
   
   componentReturns <- lapply(componentData, dailyReturn)
@@ -36,17 +35,20 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   # Remove variables where p value > cutoff
   initCoeff <- regression$coefficients
   sigComponents <- intersect(rownames(initCoeff)[initCoeff[,'Pr(>|t|)'] < cutoff], names(returnData))
-  sigReturns <- returnData[,sigComponents]
   
   # Re-Run Regression if variables were removed
-  sigRegression <- summary(lm(tickerReturns ~ ., data=sigReturns))
-  
-  # Use regression results to filter out time series
-  finCoeff <- sigRegression$coefficients[,"Estimate"]
-  y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
-  resid <- tickerReturns - y_hat
-  ret <- list()
-  ret$filteredTS <- resid
-  ret$regression <- sigRegression
-  return(ret)
+  if(length(sigComponents) > 0){
+    sigReturns <- returnData[,sigComponents]
+    sigRegression <- summary(lm(tickerReturns ~ ., data=sigReturns))
+    
+    # Use regression results to filter out time series
+    finCoeff <- sigRegression$coefficients[,"Estimate"]
+    y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
+    resid <- tickerReturns - y_hat
+    ret <- list()
+    ret$filteredTS <- resid
+    ret$regression <- sigRegression
+    return(ret)    
+  }
+
 }
