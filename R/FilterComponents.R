@@ -15,10 +15,38 @@
 FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date()) {
   
   # Use quantmod to get all the stock prices
-  # Use quantmod to calculate returns (use arithmetic daily returns)
-  # Run Regression
-  # Remove variables where p value > cutoff
-  # Re-Run Regression if variables were removed
-  # Use regression results to filter out time series
+  tickerData <- new.env()
+  getSymbols(ticker, src='yahoo', from=start, to=end, env=tickerData, warnings = F)
   
+  componentData <- new.env()
+  getSymbols(components, src='yahoo', from=start, to=end, env=componentData, warnings = F)
+  
+  # Use quantmod to calculate returns (use arithmetic daily returns)
+  stockData <- get(ticker, tickerData)
+  tickerReturns <- dailyReturn(stockData)
+  colnames(tickerReturns) <- ticker
+  
+  componentReturns <- lapply(componentData, dailyReturn)
+  returnData <- Reduce(cbind, componentReturns)
+  colnames(returnData) <- names(componentReturns)
+  
+  # Run Regression
+  regression <- summary(lm(tickerReturns ~ ., data=returnData))
+  
+  # Remove variables where p value > cutoff
+  initCoeff <- regression$coefficients
+  sigComponents <- intersect(rownames(initCoeff)[initCoeff[,'Pr(>|t|)'] < cutoff], names(returnData))
+  sigReturns <- returnData[,sigComponents]
+  
+  # Re-Run Regression if variables were removed
+  sigRegression <- summary(lm(tickerReturns ~ ., data=sigReturns))
+  
+  # Use regression results to filter out time series
+  finCoeff <- sigRegression$coefficients[,"Estimate"]
+  y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
+  resid <- tickerReturns - y_hat
+  ret <- list()
+  ret$filteredTS <- resid
+  ret$regression <- sigRegression
+  return(ret)
 }
