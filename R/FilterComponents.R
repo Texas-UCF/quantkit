@@ -16,10 +16,10 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   
   # Use quantmod to get all the stock prices
   tickerData <- new.env()
-  getSymbols(ticker, src='yahoo', from=start, to=end, env=tickerData, warnings = F)
+  getSymbols(ticker, from = start, to = end, env = tickerData, warnings = F)
   
   componentData <- new.env()
-  getSymbols(components, src='yahoo', from=start, to=end, env=componentData, warnings = F)
+  getSymbols(components, from = start, to = end, env = componentData, warnings = F)
   
   # Use quantmod to calculate returns (use arithmetic daily returns)
   tickerReturns <- dailyReturn(get(ticker, tickerData))
@@ -30,7 +30,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   colnames(returnData) <- names(componentReturns)
   
   # Run Regression
-  regression <- summary(lm(tickerReturns ~ ., data=returnData))
+  regression <- summary(lm(tickerReturns ~ ., data = returnData))
   
   # Remove variables where p value > cutoff
   initCoeff <- regression$coefficients
@@ -50,5 +50,4 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     ret$regression <- sigRegression
     return(ret)    
   }
-
 }
