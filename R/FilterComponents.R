@@ -5,7 +5,7 @@
 #' @param cutoff If p-value > cutoff, exclude the component
 #' @param start Start date
 #' @param end End date
-#' @return List of filtered out time series and regression results
+#' @return List of filtered out time series, returns, and regression results
 #' @keywords regression, components
 #' @importFrom quantmod getSymbols dailyReturn
 #' @export
@@ -46,8 +46,16 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
     resid <- tickerReturns - y_hat
     ret <- list()
+    ret$returns <- resid
+    price <- get(ticker, tickerData)[1,4]
+    resid[1] <- price
+    for(i in 2:nrow(resid)){
+      resid[i] <- price * as.numeric(resid[i]) + price
+      price <- resid[i]
+    }
     ret$filteredTS <- resid
     ret$regression <- sigRegression
-    return(ret)    
+    
+    return(ret)   
   }
 }
