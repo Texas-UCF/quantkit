@@ -27,7 +27,7 @@ EarningsChart <- function(ticker) {
   date
 
   # Plot an earnings chart for all the quarterly data from Yahoo finance
-  plot(date, earnings, col = 'blue', xlab = '# Quarters from now', ylab = 'Earnings (in millions)', main = 'Earnings chart')
+  plot(date, earnings, col = 'blue', xlab = '# Quarters from now', ylab = 'Earnings (in millions)', main = paste(ticker, 'Earnings chart'))
   lines(date, earnings, col = 'blue', lwd = 2)
   
 }
