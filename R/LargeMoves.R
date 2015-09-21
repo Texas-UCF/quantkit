@@ -12,14 +12,16 @@
 #' LargeMoves("XOM", 2, '2015-01-01', '2015-05-25')
 
 LargeMoves <- function(ticker, k, start=Sys.Date() - 365, end=Sys.Date()){
-    tickerData <- new.env()
-    getSymbols(ticker,from=start,to=end,env=tickerData)
-    
-    tickerDaily <- get(ticker, tickerData)
-    
-    dailyMoves <- tickerDaily[,2] - tickerDaily[,3]
-    dailySD <- sd(dailyMoves)
-    largeMoves <- dailyMoves[dailyMoves > k*dailySD,]
-    
-    return(tickerDaily[which(index(tickerDaily) %in% index(largeMoves)),])
+  #Use quantmod to obtain price series 
+  tickerData <- new.env()
+  getSymbols(ticker,from=start,to=end,env=tickerData)
+  tickerDaily <- get(ticker, tickerData)
+  
+  #Get the intraday price movements with the high and low prices each day
+  dailyMoves <- tickerDaily[,2] - tickerDaily[,3]
+  
+  #Return price series of days that have |movement| >= k * SD
+  dailySD <- sd(dailyMoves)
+  largeMoves <- dailyMoves[dailyMoves > k*dailySD,]
+  return(tickerDaily[which(index(tickerDaily) %in% index(largeMoves)),])
 }
