@@ -32,7 +32,7 @@ ReturnMoments <- function(ticker, start = Sys.Date() - 365, end = Sys.Date()) {
 
   # Display a histogram of the ticker's returns
   hist(as.vector(tickerReturns), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
-        ylab = "Occurrences", main = "Ticker distributions with normal distribution")
+        ylab = "Occurrences", main = paste(ticker, " return distribution with normal curve"))
   
   # Overlay a normal distribution on top of the histogram
   xfit <- seq(min(tickerReturns), max(tickerReturns), length = 40)
