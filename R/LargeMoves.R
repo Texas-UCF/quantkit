@@ -5,8 +5,8 @@
 #' @param start Start date
 #' @param end End date
 #' @return price series of days that had large moves
-#' @keywords regression, components
-#' @importFrom quantmod getSymbols dailyReturn
+#' @keywords large price movement
+#' @importFrom quantmod getSymbols 
 #' @export
 #' @examples
 #' LargeMoves("XOM", 2, '2015-01-01', '2015-05-25')
