@@ -19,7 +19,7 @@ FilterComponents(ticker, components = "^GSPC", cutoff = 0.05,
 \item{end}{End date}
 }
 \value{
-List of filtered out time series and regression results
+List of filtered out time series, returns, and regression results
 }
 \description{
 Filter Components.

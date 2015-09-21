@@ -3,7 +3,7 @@
 #' @param ticker Yahoo Finance target ticker
 #' @param quarterNumber Integer from 1-4 representing Q1, Q2, etc.
 #' @param year Year in which to search
-#' @return 
+#' @return data frame with earnings results
 #' @keywords earnings performance
 #' @importFrom quantmod getSymbols dailyReturn
 #' @importFrom qmao getEarningsCalendar
