@@ -4,24 +4,26 @@
 #' @param k number of standard deviations to be considered a large move
 #' @param start Start date
 #' @param end End date
-#' @return price series of days that had large moves
-#' @keywords large price movement
-#' @importFrom quantmod getSymbols 
+#' @return Data frame of days that had large moves and their arithmetic returns
+#' @keywords movement, events
+#' @importFrom quantmod getSymbols dailyReturn
 #' @export
 #' @examples
 #' LargeMoves("XOM", 2, '2015-01-01', '2015-05-25')
 
-LargeMoves <- function(ticker, k, start=Sys.Date() - 365, end=Sys.Date()){
-  #Use quantmod to obtain price series 
-  tickerData <- new.env()
-  getSymbols(ticker,from=start,to=end,env=tickerData)
-  tickerDaily <- get(ticker, tickerData)
+LargeMoves <- function(ticker, k, start = Sys.Date() - 365, end = Sys.Date()) {
+  # Use quantmod to obtain price and returns 
+  prices <- getSymbols(ticker, from = start, to = end, auto.assign = FALSE)
+  returns <- data.frame(dailyReturn(prices))
   
-  #Get the intraday price movements with the high and low prices each day
-  dailyMoves <- tickerDaily[,2] - tickerDaily[,3]
+  # Fix returns data frame
+  returns$date <- row.names(returns)
+  colnames(returns) <- c('return', 'date')
+  returns <- returns[, c('date', 'return')]
+  row.names(returns) <- NULL
   
-  #Return price series of days that have |movement| >= k * SD
-  dailySD <- sd(dailyMoves)
-  largeMoves <- dailyMoves[dailyMoves > k*dailySD,]
-  return(tickerDaily[which(index(tickerDaily) %in% index(largeMoves)),])
+  # Get daysReturn price series of days that have |movement| >= k * SD
+  cutoff <- k * sd(returns$return)
+  large.moves <- returns[which(abs(returns$return) >= cutoff), ]
+  return(large.moves)
 }

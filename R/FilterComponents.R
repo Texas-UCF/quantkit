@@ -47,13 +47,14 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     resid <- tickerReturns - y_hat
     ret <- list()
     ret$returns <- resid
-    price <- get(ticker, tickerData)[1,4]
+    
+    price <- 1
     resid[1] <- price
     for(i in 2:nrow(resid)){
       resid[i] <- price * as.numeric(resid[i]) + price
       price <- resid[i]
     }
-    ret$filteredTS <- resid
+    ret$filtered.price <- resid
     ret$regression <- sigRegression
     
     return(ret)   
