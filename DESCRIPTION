@@ -6,6 +6,6 @@ Authors@R: person("Texas", "Undergraduate Computational Finance",
 Description: This package is managed by students in Undergraduate Computational Finance, 
   an organization at The University of Texas at Austin. It provides functionality for 
   quantitative analysis of financial products.
-Depends: R (>= 3.2.1)
+Depends: R (>= 3.0.0)
 License: MIT license
 LazyData: true
