@@ -14,16 +14,15 @@
 
 FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date()) {
   
-  all.data <- NA
+  all.data <- c()
   
   # Use quantmod to get all the stock prices
   for (stock in c(ticker, components)) {
-    
     prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = F)
     rets <- dailyReturn(prices)
     colnames(rets) <- stock
     
-    if (is.na(all.data)) {
+    if (length(all.data) == 0) {
       all.data <- rets
     } else {
       all.data <- merge(all.data, rets)
@@ -34,18 +33,20 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   regression <- summary(lm(all.data[, 1] ~ ., data = all.data[, -1]))
   
   # Remove variables where p value > cutoff
-  initCoeff <- regression$coefficients
-  sigComponents <- intersect(rownames(initCoeff)[initCoeff[,'Pr(>|t|)'] < cutoff], names(returnData))
+  init.coeff <- regression$coefficients
+  sig.comp <- c(colnames(all.data)[1], 
+                intersect(rownames(init.coeff)[init.coeff[,'Pr(>|t|)'] < cutoff], colnames(all.data)))
+  
   
   # Re-Run Regression if variables were removed
-  if(length(sigComponents) > 0){
-    sigReturns <- returnData[,sigComponents]
-    sigRegression <- summary(lm(tickerReturns ~ ., data=sigReturns))
+  if(length(sig.comp) > 0) {
+    sig.returns <- all.data[, sig.comp]
+    sig.regression <- summary(lm(sig.returns[, 1] ~ ., data = sig.returns[, -1]))
     
     # Use regression results to filter out time series
-    finCoeff <- sigRegression$coefficients[,"Estimate"]
-    y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
-    resid <- tickerReturns - y_hat
+    fin.coeff <- sig.regression$coefficients[, "Estimate"]
+    y.hat <- rowSums(t(t(sig.returns) * fin.coeff[2:length(fin.coeff)]))
+    resid <- sig.returns[, 1] - y.hat
     result <- list()
     result$returns <- resid
     
@@ -56,7 +57,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
       price <- resid[i]
     }
     result$filtered.price <- resid
-    result$regression <- sigRegression
+    result$regression <- sig.regression
     
     return(result)   
   }
