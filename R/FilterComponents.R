@@ -39,7 +39,6 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
   sig.comp <- c(colnames(all.data)[1], 
                 intersect(rownames(init.coeff)[init.coeff[,'Pr(>|t|)'] < cutoff], colnames(all.data)))
   
-  
   # Re-Run Regression if variables were removed
   if(length(sig.comp) > 0) {
     sig.returns <- all.data[, sig.comp]
@@ -47,7 +46,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     
     # Use regression results to filter out time series
     fin.coeff <- sig.regression$coefficients[, "Estimate"]
-    y.hat <- rowSums(t(t(sig.returns) * fin.coeff[2:length(fin.coeff)]))
+    y.hat <- rowSums(t(t(sig.returns[, -1]) * fin.coeff[2:length(fin.coeff)]))
     resid <- sig.returns[, 1] - y.hat
     result <- list()
     result$returns <- resid
