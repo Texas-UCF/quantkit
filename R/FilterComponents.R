@@ -29,6 +29,8 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     }
   }
   
+  all.data <- all.data[complete.cases(all.data), ]
+  
   # Run Regression
   regression <- summary(lm(all.data[, 1] ~ ., data = all.data[, -1]))
   
