@@ -14,23 +14,24 @@
 
 FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date()) {
   
+  all.data <- NA
+  
   # Use quantmod to get all the stock prices
-  tickerData <- new.env()
-  getSymbols(ticker, from = start, to = end, env = tickerData, warnings = F)
-  
-  componentData <- new.env()
-  getSymbols(components, from = start, to = end, env = componentData, warnings = F)
-  
-  # Use quantmod to calculate returns (use arithmetic daily returns)
-  tickerReturns <- dailyReturn(get(ticker, tickerData))
-  colnames(tickerReturns) <- ticker
-  
-  componentReturns <- lapply(componentData, dailyReturn)
-  returnData <- Reduce(cbind, componentReturns)
-  colnames(returnData) <- names(componentReturns)
+  for (stock in c(ticker, components)) {
+    
+    prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = F)
+    rets <- dailyReturn(prices)
+    colnames(rets) <- stock
+    
+    if (is.na(all.data)) {
+      all.data <- rets
+    } else {
+      all.data <- merge(all.data, rets)
+    }
+  }
   
   # Run Regression
-  regression <- summary(lm(tickerReturns ~ ., data = returnData))
+  regression <- summary(lm(all.data[, 1] ~ ., data = all.data[, -1]))
   
   # Remove variables where p value > cutoff
   initCoeff <- regression$coefficients
@@ -45,8 +46,8 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     finCoeff <- sigRegression$coefficients[,"Estimate"]
     y_hat <- rowSums(t(t(sigReturns) * finCoeff[2:length(finCoeff)]))
     resid <- tickerReturns - y_hat
-    ret <- list()
-    ret$returns <- resid
+    result <- list()
+    result$returns <- resid
     
     price <- 1
     resid[1] <- price
@@ -54,9 +55,9 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
       resid[i] <- price * as.numeric(resid[i]) + price
       price <- resid[i]
     }
-    ret$filtered.price <- resid
-    ret$regression <- sigRegression
+    result$filtered.price <- resid
+    result$regression <- sigRegression
     
-    return(ret)   
+    return(result)   
   }
 }
