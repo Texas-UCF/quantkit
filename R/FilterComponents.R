@@ -10,7 +10,7 @@
 #' @importFrom quantmod getSymbols dailyReturn
 #' @export
 #' @examples
-#' FilterComponents("XOM", c("^GSPC", "USO"), 0.05, '2015-01-01', '2015-05-25')
+#' FilterComponents("XOM", c("^GSPC", "USO"), 0.05, as.Date('2015-01-01'), as.Date('2015-05-25'))
 
 FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date()) {
   
@@ -40,7 +40,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
                 intersect(rownames(init.coeff)[init.coeff[,'Pr(>|t|)'] < cutoff], colnames(all.data)))
   
   # Re-Run Regression if variables were removed
-  if(length(sig.comp) > 0) {
+  if(length(sig.comp) > 1) {
     sig.returns <- all.data[, sig.comp]
     sig.regression <- summary(lm(sig.returns[, 1] ~ ., data = sig.returns[, -1]))
     
@@ -61,5 +61,7 @@ FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start 
     result$regression <- sig.regression
     
     return(result)   
+  } else {
+    return(NA)
   }
 }
