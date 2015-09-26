@@ -9,7 +9,7 @@
 CompareKeyStats <- function(symbols, measures) {
   df <- data.frame(matrix(0, ncol = 58, nrow = 0))
   for(i in 1:length(symbols))
-    df <- rbind(df, get_key_stats(symbols[i]))
+    df <- rbind(df, GetKeyStats(symbols[i]))
   return(df[measures])
 }
 
