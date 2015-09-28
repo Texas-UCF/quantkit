@@ -1,3 +1,5 @@
+options("getSymbols.warning4.0"=FALSE, warn=-1)
+
 CorrelationMatrix <- function(ticker, correlation_cutoff = .5, start = Sys.Date() - 365, end = Sys.Date())
 {
   ticker <- 'IBM'
@@ -6,10 +8,10 @@ CorrelationMatrix <- function(ticker, correlation_cutoff = .5, start = Sys.Date(
 
   similar_stocks <- SimilarStocks(ticker)$Symbol
 
-  stock_returns <- data.frame(dailyReturn(getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = F)))
+  stock_returns <- data.frame(dailyReturn(getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)))
   for(stock in similar_stocks[-1])
   {
-    prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = F)
+    prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE)
     rets <- dailyReturn(prices)
     stock_returns <- merge(stock_returns, data.frame(rets), by=0)
     rownames(stock_returns) <- stock_returns[,1]
