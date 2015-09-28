@@ -1,4 +1,4 @@
-CovarianceMatrix <- function(ticker, correlation_cutoff = .5, start = Sys.Date() - 365, end = Sys.Date())
+CorrelationMatrix <- function(ticker, correlation_cutoff = .5, start = Sys.Date() - 365, end = Sys.Date())
 {
   ticker <- 'IBM'
   start <- Sys.Date() - 365
