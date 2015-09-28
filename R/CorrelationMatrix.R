@@ -30,7 +30,7 @@ CorrelationMatrix <- function(ticker, correlation_cutoff = .5, start = Sys.Date(
   {
     for(j in i:nrow(covariance_matrix))
     {
-      cov <- cor(stock_returns[,i], stock_returns[,j])
+      cov <- cov(stock_returns[,i], stock_returns[,j])
       corr <- cor(stock_returns[,i], stock_returns[,j])
       covariance_matrix[i, j] <- cov
       covariance_matrix[j, i] <- cov
