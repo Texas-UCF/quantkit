@@ -13,25 +13,25 @@
 EventMovement <- function(ticker, eventDates, timePeriod=7) {
 
   # Set up environment and return list
-  tickerData <- new.env()
   returns<-list()
 
-  # Return list index
-  i<-1
-  for(date in eventDates) {
+  returns <- lapply(eventDates, function(x) dailyReturn(getSymbols(ticker, from = x - timePeriod, to = x + timePeriod, auto.assign = FALSE), type="log"))
 
-    # Calculate start and end of time period
-    start <- date - timePeriod
-    end <- date + timePeriod
-
-    # Use quantmod to retrieve daily returns in period
-    getSymbols(ticker, from = start, to = end, env=tickerData)
-    dR<-dailyReturn(get(ticker, tickerData), type="log")
-
-    # Add dailyReturn timseries to vetor
-    returns[[i]]<-dR
-
-    i<-i+1
-  }
+#   # Return list index
+#   i<-1
+#   for(date in eventDates) {
+#
+#     # Calculate start and end of time period
+#     start <- date - timePeriod
+#     end <- date + timePeriod
+#
+#     # Use quantmod to retrieve daily returns in period
+#     dR<-dailyReturn(getSymbols(ticker, from = start, to = end, env=null), type="log")
+#
+#     # Add dailyReturn timseries to vetor
+#     returns[[i]]<-dR
+#
+#     i<-i+1
+  # }
   returns
 }

@@ -11,29 +11,9 @@
 #' @examples
 #' EarningsPerformance("TSLA", 2, 2015)
 
-EarningsPerformance <- function(ticker, quarterNumber, year) {
+EarningsPerformance <- function(ticker, searchStart, searchEnd, timePeriod = 7) {
 # We want to search in the quarter ahead of the quarter reported by the earnings announcment
 # for the date.
-
-   searchStart<-as.Date(Sys.Date())
-   searchEnd<-as.Date(Sys.Date())
-
-   if(quarterNumber == 3) {
-      searchStart <- as.Date(paste(year - 1, "-10-01", sep = ""))
-      searchEnd <- as.Date(paste(year - 1, "-12-31", sep = ""))
-   }
-   else if(quarterNumber == 4) {
-      searchStart <- as.Date(paste(year + 1, "-01-01", sep = ""))
-      searchEnd <- as.Date(paste(year + 1, "-03-31", sep = ""))
-   }
-   else if(quarterNumber == 1) {
-     searchStart <- as.Date(paste(year, "-04-01", sep = ""))
-     searchEnd <- as.Date(paste(year, "-06-30", sep = ""))
-   }
-   else if(quarterNumber == 2) {
-     searchStart <- as.Date(paste(year, "-07-01", sep = ""))
-     searchEnd <- as.Date(paste(year, "-09-30", sep = ""))
-   }
 
    # Search the earnings calendar using qmao during that period
    ec <- getEarningsCalendar(from = searchStart, to = searchEnd)
@@ -43,7 +23,7 @@ EarningsPerformance <- function(ticker, quarterNumber, year) {
    }
    earningsAnnouncement <- as.Date(ec[indexFound, "Date"])
 
-   returns <- EventMovement(ticker, earningsAnnouncement)
+   returns <- EventMovement(ticker, earningsAnnouncement, timePeriod)
 
  # Display a time series plot of the stock's performance
  plot(returns[[1]], y = NULL, xlab = "Time", ylab = "Log daily returns", main = paste(ticker, earningsAnnouncement, "earnings report performance"))
