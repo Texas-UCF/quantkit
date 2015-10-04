@@ -1,0 +1,58 @@
+Market Cap
+Enterprise Value
+Trailing P/E
+Forward P/E
+PEG Ratio
+Price/Sales
+Price/Book
+Enterprise Value/Revenue
+Enterprise Value/EBITDA
+Fiscal Year Ends
+Most Recent Quarter
+Profit Margin
+Operating Margin
+Return on Assets
+Return on Equity
+Revenue
+Revenue Per Share
+Qtrly Revenue Growth
+Gross Profit
+EBITDA
+Net Income Avl to Common
+Diluted EPS
+Qtrly Earnings Growth
+Total Cash
+Total Cash Per Share
+Total Debt
+Total Debt/Equity
+Current Ratio
+Book Value Per Share
+Operating Cash Flow
+Levered Free Cash Flow
+Beta
+52-Week Change
+S&P500 52-Week Change
+52-Week High
+52-Week Low
+50-Day Moving Average
+200-Day Moving Average
+Avg Vol
+Avg Vol 1
+Shares Outstanding
+Float
+% Held by Insiders
+% Held by Institutions
+Shares Short
+Short Ratio
+Short % of Float
+Shares Short 2
+Forward Annual Dividend Rate
+Forward Annual Dividend Yield
+Trailing Annual Dividend Yield
+Trailing Annual Dividend Yield 3
+5 Year Average Dividend Yield
+Payout Ratio
+Dividend Date
+Ex-Dividend Date
+Last Split Factor
+Last Split Date

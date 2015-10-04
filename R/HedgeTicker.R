@@ -13,7 +13,7 @@
 #' @examples
 #' HedgeTicker('SDRL', 100, c('SPY', 'USO'))
 
-HedgeTicker <- function(ticker, numshares, components='^GSPC', cutoff=0.05, start=Sys.Date()-365, end=Sys.Date()){
+HedgeTicker <- function(ticker, numshares=100, components='^GSPC', cutoff=0.05, start=Sys.Date()-365, end=Sys.Date()){
   filter <- FilterComponents(ticker, components=components, 
                                cutoff = cutoff, start=start, end=end)
   filter <- filter$regression$coefficients[,1] * -1 * numshares

@@ -1,6 +1,5 @@
 #' Filter Time Series
-#'
-#' @param ticker Yahoo Finance target ticker
+#' @param ts xts price series for a ticker
 #' @param components Vector of Yahoo Finance tickers to be filtered out
 #' @param cutoff If p-value > cutoff, exclude the component
 #' @return List of filtered out time series, returns, and regression results
