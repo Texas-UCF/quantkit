@@ -64,7 +64,10 @@ shinyServer(function(input,output){
 
   
   output$factsTable <- renderDataTable({
-    CompareKeyStats(str_trim(str_split(input$tickerlist, ",")[[1]]), input$quickstats)
+    tickers <- str_trim(str_split(input$tickerlist, ",")[[1]])
+    names(tickers) <- "Ticker"
+    cbind(tickers, CompareKeyStats(tickers, input$quickstats))
+
   })
   
   output$weaksim <- renderDataTable({
