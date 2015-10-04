@@ -35,49 +35,60 @@ shinyUI(fluidPage(
             
             #TODO: Add filter components 
             tabPanel("Special Movements",
-                     sidebarPanel(textInput("ticker", "Ticker"),
+                     sidebarPanel(textInput("specialticker", "Ticker"),
+                                  textInput("movementcomponents", "Components (Comma separated)", "^GSPC"),
                                   sliderInput("stddev", "Num. Standard Deviations Moved", 0, 10, value=2),
-                                  dateInput("startDate", "From", value = Sys.Date() - 365),
-                                  dateInput("endDate", "To", value = Sys.Date()),
+                                  dateInput("startDate2", "From", value = Sys.Date() - 365),
+                                  dateInput("endDate2", "To", value = Sys.Date()),
                                   radioButtons("event", "Event Type:", 
                                                c("Large Moves",
                                                  "Earnings Moves")),
+                                  checkboxInput("filtermovement", "Filter Components"),
                                   submitButton("Run")),                                  
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
-                       showOutput("plot", "Highcharts"))
+                       showOutput("plots", "Highcharts"))
                      
                      ),
             
             tabPanel("Similar Stocks",
-                     sidebarPanel(textInput("ticker", "Ticker"),
+                     sidebarPanel(textInput("similarticker", "Ticker"),
                                   sliderInput("mcap", "Market Cap % Difference", 0, 1, value=.1),
-                                  checkboxGroupInput("limits", "Specifications:", 
-                                               c("Sector",
-                                                 "Industry")),
+                                  checkboxInput("sector", "Sector", T),
+                                  checkboxInput("industry", "Industry"),
                                   submitButton("Run")),                                  
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
-                       textOutput("similar"),
+                       h3("Weak Similarities"),
+                       dataTableOutput("weaksim"),
+                       h3("Strong Similarities"),
+                       textOutput("strongsim"),
+                       br(),
+                       h3("Correlation Matrix"),
                        tableOutput("correlations"),
+                       h3("Covariance Matrix"),
                        tableOutput("covariances")
                        )
                      
                      
             ),
+            
             tabPanel("Quick Facts",
-                     sidebarPanel(textInput("tickerlist", "Tickers"),
-                                  checkboxGroupInput("stats", "Key Statistics:", 
+                     sidebarPanel(textInput("tickerlist", "Tickers (Comma Separated)"),
+                                  
+                                  #TODO: Implement Select All
+                                  checkboxGroupInput("quickstats", "Key Statistics:", 
                                                      readLines("keystats.txt")),
                                   submitButton("Run")),
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
-                                  ".shiny-output-error:before { visibility: hidden; }")
+                                  ".shiny-output-error:before { visibility: hidden; }"),
+                       dataTableOutput("factsTable")
                        
                      )
                      
