@@ -31,7 +31,7 @@ HedgePortfolio <- function(portfolio, hedgePositions, cutoff=0.05, start=Sys.Dat
   }
   input <- input[,2:ncol(input)]
   
-  #Find least Squares Fit between the input and output to get hedging ratios
+  #Find Least Squares Fit between the input and output to get hedging ratios
   #TODO: results don't have any clear interpretation
   hedges <- lsfit(input, output)
   hedges <- hedges$coefficients
