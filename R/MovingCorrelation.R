@@ -51,6 +51,7 @@ MovingCorrelation <- function(ticker, symbols, start = Sys.Date() - 365, end = S
   
   plot(xrange, yrange, type = "n", xlab = "Time", ylab = "Correlation Coefficient", main = "Correlation")
   colors <- rainbow(length(symbols))
+  legend('bottomright',colnames(correl.data),lty=1,col=colors)
   
   for(i in 1:length(symbols)){
     lines(correl.data[,i], type = "l", lwd=1.5, col=colors[i])

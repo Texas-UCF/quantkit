@@ -39,17 +39,16 @@ shinyServer(function(input,output){
       colnames(result) <- c("date", input$ticker)
       result
     }
-#     else{
-#       output$regressionTable <- renderTable({
-#         if(!is.na(filter))
-#           filter$regression$coefficients
-#         else
-#           "No Significant Components"
-#       })  
-#     }
+  
   })
   
+  similar <- reactive({
+    SimilarStocks(input$similarticker, input$mcap, input$sector, input$industry)
+  })
   
+  matrices <- reactive({
+    CorrelationMatrix(input$similarticker)
+  })
   
   output$regressionstats <- renderTable({
     fd <- filterData()
@@ -59,7 +58,42 @@ shinyServer(function(input,output){
   })
       
   output$plot <- renderChart2({
-    print(dataInput())
     hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype))
+  })
+  
+
+  
+  output$factsTable <- renderDataTable({
+    CompareKeyStats(str_trim(str_split(input$tickerlist, ",")[[1]]), input$quickstats)
+  })
+  
+  output$weaksim <- renderDataTable({
+    similarData <- similar()
+    basket <- matrices()
+    basket <- basket$highly_corr_stocks
+    # if(length(basket) > 0) 
+      similarData[!similarData$Symbol %in% basket,]
+    # else
+      # data.frame()
+  })
+  
+  output$strongsim <- renderDataTable({
+    similarData <- similar()
+    basket <- matrices()
+    basket <- basket$highly_corr_stocks
+    # if(length(basket) > 0)
+      similarData[similarData$Symbol %in% basket,]
+    # else
+      # data.frame()
+  })
+  
+  output$correlations <- renderTable({
+    mat <- matrices()
+    mat$cor_matrix
+  })
+  
+  output$covariances <- renderTable({
+    mat <- matrices()
+    mat$cov_matrix
   })
 })
