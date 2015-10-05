@@ -58,6 +58,7 @@ shinyUI(fluidPage(
             tabPanel("Similar Stocks",
                      sidebarPanel(textInput("similarticker", "Ticker"),
                                   sliderInput("mcap", "Market Cap % Difference", 0, 100, value=10),
+                                  sliderInput("regcutoff", "Absolute Correlation Coefficient Cutoff", 0, 1, value=.8),
                                   checkboxInput("sector", "Sector", T),
                                   checkboxInput("industry", "Industry"),
                                   submitButton("Run")),                                  

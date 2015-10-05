@@ -48,7 +48,8 @@ shinyServer(function(input,output){
   })
   
   matrices <- reactive({
-    CorrelationMatrix(input$similarticker)
+    CorrelationMatrix(input$similarticker, cutoff = input$regcutoff, 
+                      market.cap = input$mcap*.01, sector = input$sector, industry = input$industry)
   })
   
   spec_move <- reactive({
@@ -93,6 +94,7 @@ shinyServer(function(input,output){
   
   output$correlations <- renderTable({
     mat <- matrices()
+    print(mat$cor_matrix)
     mat$cor_matrix
   })
   
