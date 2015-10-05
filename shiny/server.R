@@ -43,7 +43,7 @@ shinyServer(function(input,output){
   })
   
   similar <- reactive({
-    SimilarStocks(input$similarticker, input$mcap, input$sector, input$industry)
+    SimilarStocks(input$similarticker, input$mcap*.01, input$sector, input$industry)
   })
   
   matrices <- reactive({
