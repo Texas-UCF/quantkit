@@ -11,4 +11,7 @@ License: MIT license
 LazyData: true
 Imports: 
 	XML,
-	moments
+	moments,
+	plyr,
+	qmao,
+	quantmod
