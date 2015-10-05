@@ -12,7 +12,7 @@
 #' @examples
 #' EarningsPerformance("TSLA", 2, 2015)
 
-EarningsPerformance <- function(ticker, searchStart, searchEnd, timePeriod = 7) {
+EarningsPerformance <- function(ticker, searchStart = Sys.Date() - 365, searchEnd = Sys.Date(), timePeriod = 7) {
 # We want to search in the quarter ahead of the quarter reported by the earnings announcment
 # for the date.
 
@@ -24,8 +24,5 @@ EarningsPerformance <- function(ticker, searchStart, searchEnd, timePeriod = 7) 
    }
    earningsAnnouncement <- as.Date(ec[indexFound, "Date"])
 
-   returns <- EventMovement(ticker, earningsAnnouncement, timePeriod)
-
- # Display a time series plot of the stock's performance
- plot(returns[[1]], y = NULL, xlab = "Time", ylab = "Log daily returns", main = paste(ticker, earningsAnnouncement, "earnings report performance"))
+   return(EventMovement(ticker, earningsAnnouncement, timePeriod))
 }
