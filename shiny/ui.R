@@ -58,7 +58,7 @@ shinyUI(fluidPage(
             
             tabPanel("Similar Stocks",
                      sidebarPanel(textInput("similarticker", "Ticker"),
-                                  sliderInput("mcap", "Market Cap % Difference", 0, 1, value=.1),
+                                  sliderInput("mcap", "Market Cap % Difference", 0, 100, value=10),
                                   checkboxInput("sector", "Sector", T),
                                   checkboxInput("industry", "Industry"),
                                   submitButton("Run")),                                  
@@ -69,7 +69,7 @@ shinyUI(fluidPage(
                        h3("Weak Similarities"),
                        dataTableOutput("weaksim"),
                        h3("Strong Similarities"),
-                       textOutput("strongsim"),
+                       dataTableOutput("strongsim"),
                        br(),
                        h3("Correlation Matrix"),
                        tableOutput("correlations"),
