@@ -85,8 +85,6 @@ shinyUI(fluidPage(
 
             tabPanel("Quick Facts",
                      sidebarPanel(textInput("tickerlist", "Tickers (Comma Separated)"),
-
-                                  #TODO: Implement Select All
                                   checkboxGroupInput("quickstats", "Key Statistics:",
                                                      choices),
                                   submitButton("Run")),
