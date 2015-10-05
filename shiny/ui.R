@@ -49,7 +49,7 @@ shinyUI(fluidPage(
                                   numericInput("window", "Plot Date Window Size", 7),
                                   radioButtons("event", "Event Type:",
                                                c("Large Moves",
-                                                 "Earnings Moves (May be slow)")),
+                                                 "Earnings Moves")),
                                   submitButton("Run")),
                      mainPanel(
                        tags$style(type="text/css",
