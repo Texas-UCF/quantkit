@@ -66,7 +66,7 @@ shinyUI(fluidPage(
                        h3("Weak Similarities"),
                        dataTableOutput("weaksim"),
                        h3("Strong Similarities"),
-                       textOutput("strongsim"),
+                       dataTableOutput("strongsim"),
                        br(),
                        h3("Correlation Matrix"),
                        tableOutput("correlations"),
