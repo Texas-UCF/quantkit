@@ -36,20 +36,23 @@ shinyUI(fluidPage(
             #TODO: Add filter components 
             tabPanel("Special Movements",
                      sidebarPanel(textInput("specialticker", "Ticker"),
+                                  checkboxInput("filtermovement", "Filter Components"),
                                   textInput("movementcomponents", "Components (Comma separated)", "^GSPC"),
-                                  sliderInput("stddev", "Num. Standard Deviations Moved", 0, 10, value=2),
+                                  sliderInput("stddev", "Num. Standard Deviations Moved", 0, 5, value=2),
+                                  numericInput("window", "Plot Date Window Size", 7),
                                   dateInput("startDate2", "From", value = Sys.Date() - 365),
                                   dateInput("endDate2", "To", value = Sys.Date()),
                                   radioButtons("event", "Event Type:", 
                                                c("Large Moves",
                                                  "Earnings Moves")),
-                                  checkboxInput("filtermovement", "Filter Components"),
+                                  
                                   submitButton("Run")),                                  
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
-                       showOutput("plots", "Highcharts"))
+                       dataTableOutput("summarymovement"),
+                       uiOutput("plots"))
                      
                      ),
             
@@ -91,10 +94,7 @@ shinyUI(fluidPage(
                        dataTableOutput("factsTable")
                        
                      )
-                     
-                     
             )
-            
   )
   
   

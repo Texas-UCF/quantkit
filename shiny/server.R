@@ -4,6 +4,7 @@ library(rCharts)
 library(quantkit)
 library(xts)
 library(quantmod)
+library(corrplot)
 
 shinyServer(function(input,output){
   
@@ -50,6 +51,10 @@ shinyServer(function(input,output){
     CorrelationMatrix(input$similarticker)
   })
   
+  large <- reactive({
+    LargeMoves(input$specialticker, input$stddev, input$startDate2, input$endDate2)
+  })
+  
   output$regressionstats <- renderTable({
     fd <- filterData()
     table <- cbind(fd$regression$coefficients, c(NA, hedgeData()))
@@ -64,9 +69,8 @@ shinyServer(function(input,output){
 
   
   output$factsTable <- renderDataTable({
-    tickers <- str_trim(str_split(input$tickerlist, ",")[[1]])
-    names(tickers) <- "Ticker"
-    cbind(tickers, CompareKeyStats(tickers, input$quickstats))
+    Ticker <- str_trim(str_split(input$tickerlist, ",")[[1]])
+    cbind(Ticker, CompareKeyStats(Ticker, input$quickstats))
 
   })
   
@@ -74,20 +78,14 @@ shinyServer(function(input,output){
     similarData <- similar()
     basket <- matrices()
     basket <- basket$highly_corr_stocks
-    # if(length(basket) > 0) 
-      similarData[!similarData$Symbol %in% basket,]
-    # else
-      # data.frame()
+    similarData[!similarData$Symbol %in% basket,]
   })
   
   output$strongsim <- renderDataTable({
     similarData <- similar()
     basket <- matrices()
     basket <- basket$highly_corr_stocks
-    # if(length(basket) > 0)
-      similarData[similarData$Symbol %in% basket,]
-    # else
-      # data.frame()
+    similarData[similarData$Symbol %in% basket,]
   })
   
   output$correlations <- renderTable({
@@ -99,4 +97,35 @@ shinyServer(function(input,output){
     mat <- matrices()
     mat$cov_matrix
   })
+  
+  
+  
+  output$plots <- renderUI({
+    if(input$event == "Large Moves")
+      df <- large()
+    
+    plot_list <- lapply(1:nrow(df), function(i){
+      plotname <- paste("plot", i, sep="")
+      showOutput(plotname, "Highcharts")
+    })
+    do.call(tagList, plot_list)
+  })
+  
+  for (my_p in 1:7){
+    local({
+      p <- my_p
+      plotname <- paste("plot", p, sep="")
+      output[[plotname]] <- renderChart2({
+        plotData <- getSymbols(input$specialticker, from = as.Date(large()[p,1]) - input$window, 
+                   to = as.Date(large()[p,1]) + input$window,
+                   auto.assign = F)[,4]
+        plotData <- data.frame(date = index(plotData), ticker = plotData[,1])
+        plotData$date <- as.character(plotData$date)
+        colnames(plotData) <- c("date", input$specialticker)
+        hPlot(x="date", y=input$specialticker, data=plotData,
+              title=paste(input$specialticker, "around", large()[p,1]))
+      })
+    })
+  }
+  
 })

@@ -36,7 +36,7 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   basket <- colnames(correlations)[correlations[,ticker] >= cutoff | correlations[,ticker] <= -cutoff]
   basket <- basket[basket != ticker]
 
-    #Create the returning list
+  #Create the returning list
   result <- list()
   result$cov_matrix <- cov(stock_returns)
   result$cor_matrix <- correlations 
