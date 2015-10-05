@@ -10,7 +10,7 @@ shinyServer(function(input,output){
   
   filterData <- reactive({
     FilterComponents(input$ticker, str_trim(str_split(input$components, ",")[[1]]), 
-                               cutoff = input$pval, start = input$startDate, end = input$endDate)
+                              cutoff = input$pval, start = input$startDate, end = input$endDate, sec = input$sectorval)
   })
   
   hedgeData <- reactive({

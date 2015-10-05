@@ -12,9 +12,52 @@
 #' @examples
 #' FilterComponents("XOM", c("^GSPC", "USO"), 0.05, as.Date('2015-01-01'), as.Date('2015-05-25'))
 
-FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date()) {
+FilterComponents <- function(ticker, components = "^GSPC", cutoff = 0.05, start = Sys.Date() - 365, end = Sys.Date(), sec = FALSE) {
   
   all.data <- c()
+  
+  if(sec == TRUE){
+    df <- stockSymbols(quiet = TRUE)
+  
+    # Fix market cap column
+    df$Market.Cap <- as.numeric(gsub("[\\$MB]", "", df$MarketCap))
+    df[grep("B", df$MarketCap), 'Market.Cap'] <- df[grep("B", df$MarketCap), 'Market.Cap'] * 1000
+    df <- df[, c('Symbol', 'Name', 'Market.Cap', 'Sector', 'Industry')]
+    
+    # Get targets
+    row <- df[which(df$Symbol == ticker), ]
+    
+    sector <- row["Sector"]
+
+    if(sector == "Transportation"){
+      components <- c(components, c("IYT"))
+    }else if(sector == "Technology"){
+      components <- c(components, c("IYW"))
+    }else if(sector == "Public Utilities"){
+      components <- c(components, c("IDU"))
+    }else if(sector == "Miscellaneous"){
+      components <- c(components, c("IGF"))
+    }else if(sector == "Health Care"){
+      components <- c(components, c("IYH"))
+    }else if(sector == "Finance"){
+      components <- c(components, c("IYF"))
+    }else if(sector == "Energy"){
+      components <- c(components, c("IYE"))
+    }else if(sector == "Consumer Services"){
+      components <- c(components, c("IYC"))
+    }else if(sector == "Consumer Non-Durables"){
+      components <- c(components, c("KXI"))
+    }else if(sector == "Consumer Durables"){
+      components <- c(components, c("RXI"))
+    }else if(sector == "Capital Goods"){
+      components <- c(components, c("EXI"))
+    }else if(sector == "Basic Industries"){
+      components <- c(components, c("IYM"))
+    }else{
+      
+    }
+  }
+  
   
   # Use quantmod to get all the stock prices
   for (stock in c(ticker, components)) {
