@@ -4,7 +4,8 @@
 \alias{EarningsPerformance}
 \title{Earnings Performance.}
 \usage{
-EarningsPerformance(ticker, searchStart, searchEnd, timePeriod = 7)
+EarningsPerformance(ticker, searchStart = Sys.Date() - 365,
+  searchEnd = Sys.Date(), timePeriod = 7)
 }
 \arguments{
 \item{ticker}{Yahoo Finance target ticker}
