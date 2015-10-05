@@ -1,8 +1,9 @@
 #' Earnings Performance.
 #'
 #' @param ticker Yahoo Finance target ticker
-#' @param quarterNumber Integer from 1-4 representing Q1, Q2, etc.
-#' @param year Year in which to search
+#' @param searchStart Beginning of date range to search in
+#' @param searchEnd End of date range to search in
+#' @param timePeriod Period of time before and after earnings report
 #' @return data frame with earnings results
 #' @keywords earnings performance
 #' @importFrom quantmod getSymbols dailyReturn
