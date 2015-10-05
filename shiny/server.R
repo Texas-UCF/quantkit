@@ -71,10 +71,13 @@ shinyServer(function(input,output){
   })
 
   output$regressionstats <- renderTable({
-    fd <- filterData()
-    table <- cbind(fd$regression$coefficients, c(NA, hedgeData()))
-    colnames(table) <- c(colnames(fd$regression$coefficients), "Hedge Shares")
-    table
+    if(!((input$charttype == "Unfiltered Return Moments")||(input$charttype == "Filtered Return Moments"))){
+      fd <- filterData()
+      table <- cbind(fd$regression$coefficients, c(NA, hedgeData()))
+      colnames(table) <- c(colnames(fd$regression$coefficients), "Hedge Shares")
+      table
+    }
+    
   })
 
   output$histPlot <- renderPlot({
@@ -82,12 +85,18 @@ shinyServer(function(input,output){
       rets <- dailyReturn(getSymbols(input$ticker, from = input$startDate, to = input$endDate, auto.assign = FALSE),type = 'log')
       hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
            ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+      xfit <- seq(min(rets), max(rets), length = 40)
+      yfit <- dnorm(xfit, mean = mean(rets), sd = sd(rets))
+      lines(xfit, yfit, col="blue", lwd = 2)
     }
     else if(input$charttype == "Filtered Return Moments"){
       rets <- filterData()
       table1 <- cbind(rets$returns)
       hist(as.vector(table1), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
            ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+      xfit <- seq(min(table1), max(table1), length = 40)
+      yfit <- dnorm(xfit, mean = mean(table1), sd = sd(table1))
+      lines(xfit, yfit, col="blue", lwd = 2)
     }
 
   })
@@ -100,10 +109,13 @@ shinyServer(function(input,output){
       moutput
     }
     else if(input$charttype == "Filtered Return Moments"){
-      mdata <- moments()
-      moutput <- matrix(unlist(mdata),ncol = 4, byrow = T)
-      colnames(moutput) <- c("Mean", "SD", "Skewness", "Kurtosis")
+      rets <- filterData()
+      table2 <- cbind(rets$returns)
+      mdata <- list("mean" = mean(table2), "sd" = sd(table2))
+      moutput <- matrix(unlist(mdata),ncol = 2, byrow = T)
+      colnames(moutput) <- c("Mean", "SD")
       moutput
+    
     }
   })
 

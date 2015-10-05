@@ -25,8 +25,7 @@ shinyUI(fluidPage(
                                                  "Unfiltered Returns",
                                                  "Filtered Returns",
                                                  "Unfiltered Return Moments",
-                                                 "Filtered Return Moments",
-                                                 "Moving Correlation")),
+                                                 "Filtered Return Moments")),
                                   submitButton("Run"),
                                   br()),
                       mainPanel(
