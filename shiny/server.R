@@ -5,6 +5,7 @@ library(quantkit)
 library(xts)
 library(quantmod)
 library(corrplot)
+library(markdown)
 
 shinyServer(function(input,output){
 
@@ -67,7 +68,7 @@ shinyServer(function(input,output){
   })
 
   output$plot <- renderChart2({
-    hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype))
+    return(hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype)))
   })
 
 
@@ -119,7 +120,7 @@ shinyServer(function(input,output){
 
     plot_list <- lapply(1:nrow(df), function(i){
       plotname <- paste("plot", i, sep="")
-      showOutput(plotname, "Highcharts")
+      showOutput(plotname, tolower("Highcharts"))
     })
     do.call(tagList, plot_list)
   })
@@ -135,8 +136,8 @@ shinyServer(function(input,output){
         plotData <- data.frame(date = index(plotData), ticker = plotData[,1])
         plotData$date <- as.character(plotData$date)
         colnames(plotData) <- c("date", input$specialticker)
-        hPlot(x="date", y=input$specialticker, data=plotData,
-              title=paste(toupper(input$specialticker), "around", spec_move()[p,1]))
+        return(hPlot(x="date", y=input$specialticker, data=plotData,
+              title=paste(toupper(input$specialticker), "around", spec_move()[p,1])))
       })
     })
   }

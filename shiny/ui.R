@@ -3,6 +3,7 @@ library(ggplot2)
 library(rCharts)
 library(rHighcharts)
 library(quantkit)
+library(markdown)
 
 shinyUI(fluidPage(
 
@@ -32,7 +33,7 @@ shinyUI(fluidPage(
                         tags$style(type="text/css",
                                    ".shiny-output-error { visibility: hidden; }",
                                    ".shiny-output-error:before { visibility: hidden; }"),
-                        showOutput("plot", "Highcharts")),
+                        showOutput("plot", tolower("Highcharts"))),
                         tableOutput("regressionstats")
                       ),
 

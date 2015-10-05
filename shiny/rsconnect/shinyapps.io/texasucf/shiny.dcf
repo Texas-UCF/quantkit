@@ -1,6 +1,8 @@
 name: shiny
 account: texasucf
 server: shinyapps.io
-bundleId: 281218
+bundleId: 281304
 url: https://texasucf.shinyapps.io/shiny
-when: 1444066488.31547
+when: 1444072444.58773
+asMultiple: FALSE
+asStatic: FALSE
