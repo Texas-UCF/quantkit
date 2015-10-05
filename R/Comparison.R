@@ -7,6 +7,9 @@
 #' @examples
 #' CompareKeyStats(c("AAPL", "GOOG", "FB"), c("Operating Margin"))
 CompareKeyStats <- function(symbols, measures) {
+  if("All" %in% measures) {
+    measures <- readLines("..\\shiny\\keyStats.txt")
+  }
   df <- data.frame(matrix(0, ncol = 58, nrow = 0))
   for(i in 1:length(symbols))
     df <- rbind(df, GetKeyStats(symbols[i]))

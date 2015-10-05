@@ -88,7 +88,7 @@ shinyUI(fluidPage(
 
                                   #TODO: Implement Select All
                                   checkboxGroupInput("quickstats", "Key Statistics:",
-                                                     readLines("keystats.txt")),
+                                                     choices),
                                   submitButton("Run")),
                      mainPanel(
                        tags$style(type="text/css",
