@@ -76,7 +76,7 @@ shinyUI(fluidPage(
                        dataTableOutput("strongsim"),
                        br(),
                        h3("Correlation Matrix"),
-                       plotOutput("correlations"),
+                       tableOutput("correlations"),
                        h3("Covariance Matrix"),
                        tableOutput("covariances")
                        )
