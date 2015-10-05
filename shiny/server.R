@@ -78,9 +78,18 @@ shinyServer(function(input,output){
   })
 
   output$histPlot <- renderPlot({
-    rets <- dailyReturn(getSymbols(input$ticker, from = input$startDate, to = input$endDate, auto.assign = FALSE),type = 'log')
-    hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns",
-         ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+    if(input$charttype == "Unfiltered Return Moments"){
+      rets <- dailyReturn(getSymbols(input$ticker, from = input$startDate, to = input$endDate, auto.assign = FALSE),type = 'log')
+      hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
+           ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+    }
+    else if(input$charttype == "Filtered Return Moments"){
+      rets <- filterData()
+      table1 <- cbind(rets$returns)
+      hist(as.vector(table1), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
+           ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+    }
+
   })
 
   output$retMoments <- renderTable({
