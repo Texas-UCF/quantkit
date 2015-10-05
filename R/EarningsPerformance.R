@@ -24,5 +24,9 @@ EarningsPerformance <- function(ticker, searchStart = Sys.Date() - 365, searchEn
    }
    earningsAnnouncement <- as.Date(ec[indexFound, "Date"])
 
-   return(EventMovement(ticker, earningsAnnouncement, timePeriod))
+   move <- EventMovement(ticker, earningsAnnouncement, timePeriod)
+   ret <- data.frame(date = index(move), move)
+   colnames(ret) <- c("date", "return")
+   return(ret)
+   
 }
