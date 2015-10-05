@@ -7,6 +7,9 @@ library(quantkit)
 shinyUI(fluidPage(
   
   navbarPage("Quantkit",
+            #Help Tab
+            tabPanel("About",
+                      includeMarkdown("about_me.md")),
             #Filter Components Tab
             tabPanel("Filter Components", 
                      sidebarPanel(textInput("ticker", "Ticker"),
