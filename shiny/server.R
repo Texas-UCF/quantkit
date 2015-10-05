@@ -92,10 +92,9 @@ shinyServer(function(input,output){
     similarData[similarData$Symbol %in% basket,]
   })
   
-  output$correlations <- renderTable({
+  output$correlations <- renderPlot({
     mat <- matrices()
-    print(mat$cor_matrix)
-    mat$cor_matrix
+    corrplot(mat$cor_matrix)
   })
   
   output$covariances <- renderTable({
