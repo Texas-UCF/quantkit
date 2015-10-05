@@ -9,9 +9,11 @@ EarningsPerformance(ticker, searchStart, searchEnd, timePeriod = 7)
 \arguments{
 \item{ticker}{Yahoo Finance target ticker}
 
-\item{quarterNumber}{Integer from 1-4 representing Q1, Q2, etc.}
+\item{searchStart}{Beginning of date range to search in}
 
-\item{year}{Year in which to search}
+\item{searchEnd}{End of date range to search in}
+
+\item{timePeriod}{Period of time before and after earnings report}
 }
 \value{
 data frame with earnings results
