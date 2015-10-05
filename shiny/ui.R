@@ -36,16 +36,15 @@ shinyUI(fluidPage(
             #TODO: Add filter components 
             tabPanel("Special Movements",
                      sidebarPanel(textInput("specialticker", "Ticker"),
-                                  checkboxInput("filtermovement", "Filter Components"),
-                                  textInput("movementcomponents", "Components (Comma separated)", "^GSPC"),
+#                                  checkboxInput("filtermovement", "Filter Components"),
+#                                  uiOutput("componentUI"),
                                   sliderInput("stddev", "Num. Standard Deviations Moved", 0, 5, value=2),
-                                  numericInput("window", "Plot Date Window Size", 7),
                                   dateInput("startDate2", "From", value = Sys.Date() - 365),
                                   dateInput("endDate2", "To", value = Sys.Date()),
+                                  numericInput("window", "Plot Date Window Size", 7),
                                   radioButtons("event", "Event Type:", 
                                                c("Large Moves",
                                                  "Earnings Moves")),
-                                  
                                   submitButton("Run")),                                  
                      mainPanel(
                        tags$style(type="text/css",

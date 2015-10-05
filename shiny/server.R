@@ -51,8 +51,11 @@ shinyServer(function(input,output){
     CorrelationMatrix(input$similarticker)
   })
   
-  large <- reactive({
-    LargeMoves(input$specialticker, input$stddev, input$startDate2, input$endDate2)
+  spec_move <- reactive({
+    if(input$event == "Large Moves")
+      LargeMoves(input$specialticker, input$stddev, input$startDate2, input$endDate2)
+    else if(input$event == "Earnings Moves")
+      EarningsPerformance(input$specialticker, input$startDate2, input$endDate2)
   })
   
   output$regressionstats <- renderTable({
@@ -99,14 +102,19 @@ shinyServer(function(input,output){
   })
   
   output$summarymovement <- renderDataTable({
-    summary <- large()
+    summary <- spec_move()
     colnames(summary) <- c("Date", "Return")
     summary
   })
   
+#   output$componentUI <- renderUI({
+#     if(input$filtermovement)
+#       textInput("specialcomponents", "Components (Comma separated)", "^GSPC")
+#   })
+  
   output$plots <- renderUI({
     if(input$event == "Large Moves")
-      df <- large()
+      df <- spec_move()
     
     plot_list <- lapply(1:nrow(df), function(i){
       plotname <- paste("plot", i, sep="")
@@ -120,14 +128,14 @@ shinyServer(function(input,output){
       p <- my_p
       plotname <- paste("plot", p, sep="")
       output[[plotname]] <- renderChart2({
-        plotData <- getSymbols(input$specialticker, from = as.Date(large()[p,1]) - input$window, 
-                   to = as.Date(large()[p,1]) + input$window,
+        plotData <- getSymbols(input$specialticker, from = as.Date(spec_move()[p,1]) - input$window, 
+                   to = as.Date(spec_move()[p,1]) + input$window,
                    auto.assign = F)[,4]
         plotData <- data.frame(date = index(plotData), ticker = plotData[,1])
         plotData$date <- as.character(plotData$date)
         colnames(plotData) <- c("date", input$specialticker)
         hPlot(x="date", y=input$specialticker, data=plotData,
-              title=paste(input$specialticker, "around", large()[p,1]))
+              title=paste(input$specialticker, "around", spec_move()[p,1]))
       })
     })
   }
