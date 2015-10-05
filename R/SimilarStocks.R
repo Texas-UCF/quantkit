@@ -24,7 +24,7 @@ SimilarStocks <- function(ticker, market.cap = 0.1, sector = TRUE, industry = FA
   # Get targets
   row <- df[which(df$Symbol == ticker), ]
   
-  if (market.cap != FALSE) {
+  if (market.cap != 0) {
     min.market.cap <- row$Market.Cap * (1 - market.cap)
     max.market.cap <- row$Market.Cap * (1 + market.cap)
     df <- df[which(df$Market.Cap >= min.market.cap & df$Market.Cap <= max.market.cap), ]
