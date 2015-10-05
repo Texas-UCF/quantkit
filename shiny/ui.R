@@ -5,13 +5,13 @@ library(rHighcharts)
 library(quantkit)
 
 shinyUI(fluidPage(
-  
+
   navbarPage("Quantkit",
             #Help Tab
             tabPanel("About",
                       includeMarkdown("about_me.md")),
             #Filter Components Tab
-            tabPanel("Filter Components", 
+            tabPanel("Filter Components",
                      sidebarPanel(textInput("ticker", "Ticker"),
                                   textInput("components", "Components (Comma separated)", "^GSPC"),
                                   checkboxInput("sectorval", "Filter by Sector"),
@@ -19,12 +19,12 @@ shinyUI(fluidPage(
                                   dateInput("startDate", "From", value = Sys.Date() - 365),
                                   dateInput("endDate", "To", value = Sys.Date()),
                                   numericInput("hedgeshares", label = "Number of Shares", value = 100),
-                                  radioButtons("charttype", "Output:", 
+                                  radioButtons("charttype", "Output:",
                                                c("Unfiltered Price (Stock Price)",
                                                  "Filtered Price",
                                                  "Unfiltered Returns",
                                                  "Filtered Returns",
-                                                 "Unfiltered Return Moments", 
+                                                 "Unfiltered Return Moments",
                                                  "Filtered Return Moments")),
                                   h6("*sets level of statistical significance at which to filter series"),
                                   submitButton("Run"),
@@ -37,8 +37,8 @@ shinyUI(fluidPage(
                         h3("Statistics"),
                         tableOutput("regressionstats")
                       ),
-            
-            #TODO: Add filter components 
+
+            #TODO: Add filter components
             tabPanel("Special Movements",
                      sidebarPanel(textInput("specialticker", "Ticker"),
 #                                  checkboxInput("filtermovement", "Filter Components"),
@@ -47,26 +47,26 @@ shinyUI(fluidPage(
                                   dateInput("startDate2", "From", value = Sys.Date() - 365),
                                   dateInput("endDate2", "To", value = Sys.Date()),
                                   numericInput("window", "Plot Date Window Size", 7),
-                                  radioButtons("event", "Event Type:", 
+                                  radioButtons("event", "Event Type:",
                                                c("Large Moves",
-                                                 "Earnings Moves")),
-                                  submitButton("Run")),                                  
+                                                 "Earnings Moves (May be slow)")),
+                                  submitButton("Run")),
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
                        dataTableOutput("summarymovement"),
                        uiOutput("plots"))
-                     
+
                      ),
-            
+
             tabPanel("Similar Stocks",
                      sidebarPanel(textInput("similarticker", "Ticker"),
                                   sliderInput("mcap", "Market Cap % Difference", 0, 100, value=10),
                                   sliderInput("regcutoff", "Absolute Correlation Coefficient Cutoff", 0, 1, value=.8),
                                   checkboxInput("sector", "Sector", T),
                                   checkboxInput("industry", "Industry"),
-                                  submitButton("Run")),                                  
+                                  submitButton("Run")),
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
@@ -81,15 +81,15 @@ shinyUI(fluidPage(
                        h3("Covariance Matrix"),
                        tableOutput("covariances")
                        )
-                     
-                     
+
+
             ),
-            
+
             tabPanel("Quick Facts",
                      sidebarPanel(textInput("tickerlist", "Tickers (Comma Separated)"),
-                                  
+
                                   #TODO: Implement Select All
-                                  checkboxGroupInput("quickstats", "Key Statistics:", 
+                                  checkboxGroupInput("quickstats", "Key Statistics:",
                                                      readLines("keystats.txt")),
                                   submitButton("Run")),
                      mainPanel(
@@ -97,12 +97,12 @@ shinyUI(fluidPage(
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
                        dataTableOutput("factsTable")
-                       
+
                      )
             )
   )
-  
-  
-  
-  
+
+
+
+
 ))
