@@ -97,7 +97,13 @@ shinyServer(function(input,output){
     mat <- matrices()
     mat$cov_matrix
   })
-
+  
+  output$summarymovement <- renderDataTable({
+    summary <- large()
+    colnames(summary) <- c("Date", "Return")
+    summary
+  })
+  
   output$plots <- renderUI({
     if(input$event == "Large Moves")
       df <- large()
