@@ -16,7 +16,7 @@ Special movements is used to find large stock moves in order to dive deeper for 
 The event type Large Moves finds all moves greater than the given standard deviation in the date range.  Earnings Moves automatically finds earnings dates for the asset and displays and graphs them.
 
 ### Similar Stocks
-Similar stocks is used for finding stocks similar to the entered ticker.  It utilizes how close the market caps should be, and matches for sector and industry as inputted.  Both strong and week similarities are outputted.
+Similar stocks is used for finding stocks similar to the entered ticker.  It utilizes how close the market caps should be, and matches for sector and industry as inputted.  Both strong and weak similarities are outputted. Additionally, correlation and covariance matrices are displayed for stocks showing strong similarities.
 
 ### Quick Facts
 Quick Facts returns fundamental finance information for any equity (no ETFs, index funds, etc).
