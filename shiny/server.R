@@ -41,6 +41,12 @@ shinyServer(function(input,output){
       colnames(result) <- c("date", input$ticker)
       result
     }
+    else if(input$charttype == "Unfiltered Return Moments"){
+      
+    }
+    else if(input$charttype == "Filtered Return Moments"){
+      
+    }
 
   })
 
@@ -53,6 +59,10 @@ shinyServer(function(input,output){
                       market.cap = input$mcap*.01, sector = input$sector, industry = input$industry)
   })
 
+  moments <- reactive({
+    ReturnMoments(input$ticker, start = input$startDate, end=input$endDate)
+  })
+  
   spec_move <- reactive({
     if(input$event == "Large Moves")
       LargeMoves(input$specialticker, input$stddev, input$startDate2, input$endDate2)
@@ -67,6 +77,27 @@ shinyServer(function(input,output){
     table
   })
 
+  output$histPlot <- renderPlot({
+    rets <- dailyReturn(getSymbols(input$ticker, from = input$startDate, to = input$endDate, auto.assign = FALSE),type = 'log')
+    hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
+         ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
+  })
+  
+  output$retMoments <- renderTable({
+    if(input$charttype == "Unfiltered Return Moments"){
+      mdata <- moments()
+      moutput <- matrix(unlist(mdata),ncol = 4, byrow = T)
+      colnames(moutput) <- c("Mean", "SD", "Skewness", "Kurtosis")
+      moutput
+    }
+    else if(input$charttype == "Filtered Return Moments"){
+      mdata <- moments()
+      moutput <- matrix(unlist(mdata),ncol = 4, byrow = T)
+      colnames(moutput) <- c("Mean", "SD", "Skewness", "Kurtosis")
+      moutput
+    }
+  })
+  
   output$plot <- renderChart2({
     return(hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype)))
   })

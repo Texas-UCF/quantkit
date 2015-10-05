@@ -34,7 +34,9 @@ shinyUI(fluidPage(
                                    ".shiny-output-error { visibility: hidden; }",
                                    ".shiny-output-error:before { visibility: hidden; }"),
                         showOutput("plot", tolower("Highcharts"))),
-                        tableOutput("regressionstats")
+                        tableOutput("regressionstats"),
+                        tableOutput("retMoments"),
+                        plotOutput("histPlot")
                       ),
 
             #TODO: Add filter components
