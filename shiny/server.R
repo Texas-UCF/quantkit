@@ -10,7 +10,7 @@ shinyServer(function(input,output){
   
   filterData <- reactive({
     FilterComponents(input$ticker, str_trim(str_split(input$components, ",")[[1]]), 
-                              cutoff = input$pval, start = input$startDate, end = input$endDate, sec = input$sectorval)
+                              cutoff = input$pval, start = input$startDate, end = input$endDate)
   })
   
   hedgeData <- reactive({
@@ -29,7 +29,7 @@ shinyServer(function(input,output){
     else if(input$charttype == "Filtered Price")
         data.frame(date=as.character(index(filter$filtered.price)), coredata(filter$filtered.price))
     
-    else if(input$charttype == "Unfiltered Price"){
+    else if(input$charttype == "Unfiltered Price (Stock Price)"){
       result <- data.frame(date=as.character(index(price)), coredata(price))
       colnames(result) <- c("date", input$ticker)
       result
@@ -124,7 +124,7 @@ shinyServer(function(input,output){
     do.call(tagList, plot_list)
   })
   
-  for (my_p in 1:7){
+  for (my_p in 1:50){
     local({
       p <- my_p
       plotname <- paste("plot", p, sep="")
@@ -136,7 +136,7 @@ shinyServer(function(input,output){
         plotData$date <- as.character(plotData$date)
         colnames(plotData) <- c("date", input$specialticker)
         hPlot(x="date", y=input$specialticker, data=plotData,
-              title=paste(input$specialticker, "around", spec_move()[p,1]))
+              title=paste(toupper(input$specialticker), "around", spec_move()[p,1]))
       })
     })
   }

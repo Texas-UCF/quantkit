@@ -14,8 +14,7 @@ shinyUI(fluidPage(
             tabPanel("Filter Components",
                      sidebarPanel(textInput("ticker", "Ticker"),
                                   textInput("components", "Components (Comma separated)", "^GSPC"),
-                                  checkboxInput("sectorval", "Filter by Sector"),
-                                  sliderInput("pval", "P-Value*", 0, 1, value=0.05),
+                                  sliderInput("pval", "p-value", 0, 1, value=0.05),
                                   dateInput("startDate", "From", value = Sys.Date() - 365),
                                   dateInput("endDate", "To", value = Sys.Date()),
                                   numericInput("hedgeshares", label = "Number of Shares", value = 100),
@@ -25,8 +24,8 @@ shinyUI(fluidPage(
                                                  "Unfiltered Returns",
                                                  "Filtered Returns",
                                                  "Unfiltered Return Moments",
-                                                 "Filtered Return Moments")),
-                                  h6("*sets level of statistical significance at which to filter series"),
+                                                 "Filtered Return Moments",
+                                                 "Moving Correlation")),
                                   submitButton("Run"),
                                   br()),
                       mainPanel(
@@ -34,7 +33,6 @@ shinyUI(fluidPage(
                                    ".shiny-output-error { visibility: hidden; }",
                                    ".shiny-output-error:before { visibility: hidden; }"),
                         showOutput("plot", "Highcharts")),
-                        h3("Statistics"),
                         tableOutput("regressionstats")
                       ),
 
