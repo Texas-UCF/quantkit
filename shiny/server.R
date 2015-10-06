@@ -4,6 +4,7 @@ library(rCharts)
 library(quantkit)
 library(xts)
 library(quantmod)
+library(qmao)
 library(corrplot)
 library(markdown)
 
