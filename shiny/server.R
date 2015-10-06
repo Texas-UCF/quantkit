@@ -77,13 +77,13 @@ shinyServer(function(input,output){
       colnames(table) <- c(colnames(fd$regression$coefficients), "Hedge Shares")
       table
     }
-    
+
   })
 
   output$histPlot <- renderPlot({
     if(input$charttype == "Unfiltered Return Moments"){
       rets <- dailyReturn(getSymbols(input$ticker, from = input$startDate, to = input$endDate, auto.assign = FALSE),type = 'log')
-      hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
+      hist(as.vector(rets), breaks = "FD", col = "red", xlab = "Logarithmic daily returns",
            ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
       xfit <- seq(min(rets), max(rets), length = 40)
       yfit <- dnorm(xfit, mean = mean(rets), sd = sd(rets))
@@ -92,7 +92,7 @@ shinyServer(function(input,output){
     else if(input$charttype == "Filtered Return Moments"){
       rets <- filterData()
       table1 <- cbind(rets$returns)
-      hist(as.vector(table1), breaks = "FD", col = "red", xlab = "Logarithmic daily returns", 
+      hist(as.vector(table1), breaks = "FD", col = "red", xlab = "Logarithmic daily returns",
            ylab = "Occurrences", main = paste(input$ticker, " return distribution with normal curve"))
       xfit <- seq(min(table1), max(table1), length = 40)
       yfit <- dnorm(xfit, mean = mean(table1), sd = sd(table1))
@@ -115,7 +115,7 @@ shinyServer(function(input,output){
       moutput <- matrix(unlist(mdata),ncol = 2, byrow = T)
       colnames(moutput) <- c("Mean", "SD")
       moutput
-    
+
     }
   })
 
@@ -159,7 +159,10 @@ shinyServer(function(input,output){
   })
 
   output$summarymovement <- renderDataTable({
-    summary <- spec_move()
+    if(input$event == "Earnings Moves")
+      summary <- spec_move()$data[6,]
+    else
+      summary <- spec_move()
     colnames(summary) <- c("Date", "Return")
     summary
   })
@@ -173,6 +176,10 @@ shinyServer(function(input,output){
     if(input$event == "Large Moves")
       df <- spec_move()
 
+    if(input$event == "Earnings Moves"){
+      df <- data.frame(spec_move()$data[6,])
+    }
+
     plot_list <- lapply(1:nrow(df), function(i){
       plotname <- paste("plot", i, sep="")
       showOutput(plotname, tolower("Highcharts"))
@@ -185,14 +192,20 @@ shinyServer(function(input,output){
       p <- my_p
       plotname <- paste("plot", p, sep="")
       output[[plotname]] <- renderChart2({
-        plotData <- getSymbols(input$specialticker, from = as.Date(spec_move()[p,1]) - input$window,
-                   to = as.Date(spec_move()[p,1]) + input$window,
+
+        if(input$event == "Earnings Moves")
+          sm <- spec_move()$data[6,]
+        else
+          sm <- spec_move()
+
+        plotData <- getSymbols(input$specialticker, from = as.Date(sm[p,1]) - input$window,
+                   to = as.Date(sm[p,1]) + input$window,
                    auto.assign = F)[,4]
         plotData <- data.frame(date = index(plotData), ticker = plotData[,1])
         plotData$date <- as.character(plotData$date)
         colnames(plotData) <- c("date", input$specialticker)
         return(hPlot(x="date", y=input$specialticker, data=plotData,
-              title=paste(toupper(input$specialticker), "around", spec_move()[p,1])))
+              title=paste(toupper(input$specialticker), "around", sm[p,1])))
       })
     })
   }
