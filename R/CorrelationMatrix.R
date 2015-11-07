@@ -21,11 +21,20 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   similar_stocks <- SimilarStocks(ticker, market.cap, sector, industry)$Symbol
 
   #Get daily returns each stock
-  stock_returns <- data.frame(dailyReturn(getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)))
-  for(stock in similar_stocks[-1])
+  stock_prices <- getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)
+  stock_returns <- data.frame(dailyReturn(stock_prices))
+  stock_prices <- data.frame(stock_prices)
+  stock_prices$Date <- rownames(stock_prices)
+  stock_prices <- stock_prices[,c(1,4,7)]
+
+  for(stock in similar_stocks)
   {
     prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE)
     rets <- dailyReturn(prices)
+    prices <- data.frame(prices)
+    prices$Date <- rownames(prices)
+
+    stock_prices <- merge(stock_prices, prices[,c(1,4,7)], by = "Date")
     stock_returns <- merge(stock_returns, data.frame(rets), by=0)
     rownames(stock_returns) <- stock_returns[,1]
     stock_returns <- stock_returns[,-1]
@@ -38,8 +47,9 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
 
   #Create the returning list
   result <- list()
+  result$prices <- stock_prices
   result$cov_matrix <- cov(stock_returns)
-  result$cor_matrix <- correlations 
+  result$cor_matrix <- correlations
   result$highly_corr_stocks <- basket
   return(result)
 }
