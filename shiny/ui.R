@@ -32,7 +32,7 @@ shinyUI(fluidPage(
                         tags$style(type="text/css",
                                    ".shiny-output-error { visibility: hidden; }",
                                    ".shiny-output-error:before { visibility: hidden; }"),
-                        showOutput("plot", tolower("Highcharts"))),
+                        showOutput("plot", "highcharts")),
                         tableOutput("regressionstats"),
                         tableOutput("retMoments"),
                         plotOutput("histPlot")
@@ -77,7 +77,7 @@ shinyUI(fluidPage(
                        dataTableOutput("strongsim"),
                        br(),
                        h3("Correlation Matrix"),
-                       tableOutput("correlations"),
+                       plotOutput("correlations"),
                        h3("Covariance Matrix"),
                        tableOutput("covariances")
                        )
@@ -97,7 +97,20 @@ shinyUI(fluidPage(
                        dataTableOutput("factsTable")
 
                      )
-            )
+            ),
+            
+            tabPanel("Pairs Trading",
+                     sidebarPanel(textInput("pairsTicker1", "Ticker 1"),
+                                  textInput("pairsTicker2", "Ticker 2"),
+                                  submitButton("Run")
+                                  ),
+                     mainPanel(
+                       tags$style(type="text/css",
+                                  ".shiny-output-error { visibility: hidden; }",
+                                  ".shiny-output-error:before { visibility: hidden; }"),
+                       showOutput("pairsplot", "highcharts")
+                     )
+           )
   )
 
 

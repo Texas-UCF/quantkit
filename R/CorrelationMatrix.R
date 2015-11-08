@@ -21,28 +21,32 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   similar_stocks <- SimilarStocks(ticker, market.cap, sector, industry)$Symbol
 
   #Get daily returns each stock
-  stock_prices <- getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)
-  stock_returns <- data.frame(dailyReturn(stock_prices))
-  stock_prices <- data.frame(stock_prices)
-  stock_prices$Date <- rownames(stock_prices)
-  stock_prices <- stock_prices[,c(1,4,7)]
-
+  # stock_prices <- getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)
+  # stock_returns <- data.frame(dailyReturn(stock_prices))
+  # stock_prices <- data.frame(stock_prices)
+  # stock_prices$Date <- rownames(stock_prices)
+  # stock_prices <- stock_prices[,c(1,4,7)]
+  
+  stock_prices <- data.frame() 
+  stock_returns <- data.frame() 
+  
   for(stock in similar_stocks)
   {
-    prices <- getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE)
-    rets <- dailyReturn(prices)
-    prices <- data.frame(prices)
+    prices <- data.frame(getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE))
+    # rets <- data.frame(dailyReturn(prices))
+    
+    # prices <- data.frame(prices)
     prices$Date <- rownames(prices)
 
-    stock_prices <- merge(stock_prices, prices[,c(1,4,7)], by = "Date")
-    stock_returns <- merge(stock_returns, data.frame(rets), by=0)
-    rownames(stock_returns) <- stock_returns[,1]
-    stock_returns <- stock_returns[,-1]
+    stock_prices <-  if(nrow(stock_prices) == 0) prices[,c(1,4,7)] else merge(stock_prices, prices[,c(1,4,7)], by = "Date")
+    # stock_returns <- if(nrow(stock_returns) == 0) rets else merge(stock_returns, data.frame(rets), by=0)
   }
-
+  closes <- stock_prices[,seq(from=3,to=ncol(stock_prices), by=2)]
+  stock_returns <- data.frame(t(matrix(unlist(lapply(closes, function(x) diff(x) / head(x, -1))), nrow=ncol(closes), byrow=F)))
+  
   colnames(stock_returns) <- similar_stocks
   correlations <- cor(stock_returns)
-  basket <- colnames(correlations)[correlations[,ticker] >= cutoff | correlations[,ticker] <= -cutoff]
+  basket <- colnames(correlations)[correlations[,ticker] >= abs(cutoff)]
   basket <- basket[basket != ticker]
 
   #Create the returning list
