@@ -33,13 +33,8 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   for(stock in similar_stocks)
   {
     prices <- data.frame(getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE))
-    # rets <- data.frame(dailyReturn(prices))
-    
-    # prices <- data.frame(prices)
     prices$Date <- rownames(prices)
-
     stock_prices <-  if(nrow(stock_prices) == 0) prices[,c(1,4,7)] else merge(stock_prices, prices[,c(1,4,7)], by = "Date")
-    # stock_returns <- if(nrow(stock_returns) == 0) rets else merge(stock_returns, data.frame(rets), by=0)
   }
   closes <- stock_prices[,seq(from=3,to=ncol(stock_prices), by=2)]
   stock_returns <- data.frame(t(matrix(unlist(lapply(closes, function(x) diff(x) / head(x, -1))), nrow=ncol(closes), byrow=F)))

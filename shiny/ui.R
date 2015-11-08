@@ -102,6 +102,10 @@ shinyUI(fluidPage(
             tabPanel("Pairs Trading",
                      sidebarPanel(textInput("pairsTicker1", "Ticker 1"),
                                   textInput("pairsTicker2", "Ticker 2"),
+                                  numericInput("pairs_cap", label = "Starting Capital", value = 10000),
+                                  numericInput("mavg_win", label = "Moving Average Window", value = 30),
+                                  dateInput("startDatePairs", "From", value = Sys.Date() - 365),
+                                  dateInput("endDatePairs", "To", value = Sys.Date()),
                                   submitButton("Run")
                                   ),
                      mainPanel(

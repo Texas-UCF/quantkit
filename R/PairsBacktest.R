@@ -1,6 +1,31 @@
+#' Pairs Backtest
+#'
+#' @param capital Starting cash
+#' @param a_open Open price series for ticker A
+#' @param b_open Open price series for ticker B
+#' @param a_close Close price series for ticker A
+#' @param b_close Close price series for ticker B
+#' @return vector of account values 
+#' @keywords pairs, backtest, trade, statistical, arbitrage
+#' @importFrom quantmod getSymbols
+#' @export
 
-backtest <- function(capital, a_open, a_close, b_open, b_close, mavg_window = 30) {
+PairsBacktest <- function(capital, ticker1, ticker2, mavg_window = 30, start = Sys.Date() - 365, end = Sys.Date()) {
   account_values <- c()
+  
+  #Get price data
+  stock_prices <- data.frame() 
+  for(stock in c(ticker1, ticker2))
+  {
+    prices <- data.frame(getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE))
+    prices$Date <- rownames(prices)
+    stock_prices <-  if(nrow(stock_prices) == 0) prices[,c(1,4,7)] else merge(stock_prices, prices[,c(1,4,7)], by = "Date")
+  }
+  
+  a_open  <- stock_prices[,1]
+  a_close  <- stock_prices[,2]
+  b_open  <- stock_prices[,3]
+  b_close  <- stock_prices[,4]
   
   for (i in (mavg_window+1):length(a_open)) {
     #Calculate price differences for previous 'days' days
@@ -28,6 +53,6 @@ backtest <- function(capital, a_open, a_close, b_open, b_close, mavg_window = 30
     
     account_values <- c(account_values, capital)
   }
-  return(account_values)
+  return data.frame(Date=stock_prices$Date, account_values=account_values)
   
 }

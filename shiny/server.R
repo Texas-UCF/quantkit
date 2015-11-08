@@ -121,13 +121,18 @@ shinyServer(function(input,output){
   })
 
   output$plot <- renderChart2({
-    #return(hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype)))
     plot<-hPlot(x="date", y=input$ticker, data=dataInput(), title=paste(input$ticker, input$charttype))
     plot$xAxis(title=list(text=paste(input$startDate, "  to   ", input$endDate)),type="datetime", labels = list(enabled = F))
     return(plot)
   })
 
-
+  output$pairsplot <- renderChart2({
+    plot<-hPlot(x="Date", y="account_values", data=PairsBacktest(input$capital, input$pairsTicker1, input$pairsTicker2,
+                                                                input$mavg_win, input$startDatePairs, input$endDatePairs), 
+                title=paste(input$ticker, input$charttype))
+    plot$xAxis(title=list(text=paste(input$startDate, "  to   ", input$endDate)),type="datetime", labels = list(enabled = F))
+    return(plot)
+  })
 
   output$factsTable <- renderDataTable({
     Ticker <- toupper(str_trim(str_split(input$tickerlist, ",")[[1]]))
