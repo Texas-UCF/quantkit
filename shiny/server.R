@@ -139,6 +139,11 @@ shinyServer(function(input,output){
     # plot$xAxis(title=list(text=paste(input$startDate, "  to   ", input$endDate)),type="datetime", labels = list(enabled = F))
     return(plot)
   })
+  
+  output$tradedates <- renderDataTable({
+    bt = pairsDataInput()
+    trade_dates(bt)
+  })
 
     
   output$factsTable <- renderDataTable({
