@@ -103,16 +103,19 @@ shinyUI(fluidPage(
                      sidebarPanel(textInput("pairsTicker1", "Ticker 1"),
                                   textInput("pairsTicker2", "Ticker 2"),
                                   numericInput("pairs_cap", label = "Starting Capital", value = 10000),
-                                  numericInput("mavg_win", label = "Moving Average Window", value = 30),
-                                  dateInput("startDatePairs", "From", value = Sys.Date() - 365),
-                                  dateInput("endDatePairs", "To", value = Sys.Date()),
+                                  sliderInput("pairsThreshold", label = "Num. SDs Threshold", .1, 10, value = 1.5),
+                                  dateInput("startDateTrain", "Training Start Date", value = Sys.Date() - 365*2),
+                                  dateInput("endDateTrain", "Training End Date", value = Sys.Date() - 365),
+                                  dateInput("startDateTest", "Testing Start Date", value = Sys.Date() - 365),
+                                  dateInput("endDateTest", "Testing End Date", value = Sys.Date()),
                                   submitButton("Run")
                                   ),
                      mainPanel(
                        tags$style(type="text/css",
                                   ".shiny-output-error { visibility: hidden; }",
                                   ".shiny-output-error:before { visibility: hidden; }"),
-                       showOutput("pairsplot", "highcharts")
+                       tableOutput("pairs_info")
+                       # showOutput("pairsplot", "highcharts")
                      )
            )
   )

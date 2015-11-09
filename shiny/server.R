@@ -50,6 +50,13 @@ shinyServer(function(input,output){
     }
 
   })
+  
+  pairsDataInput <- reactive({
+    result <- PairsBacktest(input$capital, input$pairsTicker1, input$pairsTicker2, 
+                            input$pairsThreshold, input$startDateTrain, 
+                            input$endDateTrain, input$startDateTest, input$endDateTest)
+    result
+  })
 
   similar <- reactive({
     SimilarStocks(input$similarticker, input$mcap*.01, input$sector, input$industry)
@@ -126,14 +133,19 @@ shinyServer(function(input,output){
     return(plot)
   })
 
-  output$pairsplot <- renderChart2({
-    plot<-hPlot(x="Date", y="account_values", data=PairsBacktest(input$capital, input$pairsTicker1, input$pairsTicker2,
-                                                                input$mavg_win, input$startDatePairs, input$endDatePairs), 
-                title=paste(input$ticker, input$charttype))
-    plot$xAxis(title=list(text=paste(input$startDate, "  to   ", input$endDate)),type="datetime", labels = list(enabled = F))
-    return(plot)
+#   output$pairsplot <- renderChart2({
+#     plot<-hPlot(x="Date", y="account_values", data=pairsDataInput(), 
+#                 title=paste(input$ticker, input$charttype))
+#     # plot$xAxis(title=list(text=paste(input$startDate, "  to   ", input$endDate)),type="datetime", labels = list(enabled = F))
+#     return(plot)
+#   })
+  
+  output$pairs_info <- renderTable({
+    return(PairsBacktest(input$capital, input$pairsTicker1, input$pairsTicker2, 
+                            input$pairsThreshold, input$startDateTrain, 
+                            input$endDateTrain, input$startDateTest, input$endDateTest))
   })
-
+    
   output$factsTable <- renderDataTable({
     Ticker <- toupper(str_trim(str_split(input$tickerlist, ",")[[1]]))
     cbind(Ticker, CompareKeyStats(Ticker, input$quickstats))

@@ -21,12 +21,6 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   similar_stocks <- SimilarStocks(ticker, market.cap, sector, industry)$Symbol
 
   #Get daily returns each stock
-  # stock_prices <- getSymbols(similar_stocks[1], from = start, to = end, auto.assign = F, warnings = FALSE)
-  # stock_returns <- data.frame(dailyReturn(stock_prices))
-  # stock_prices <- data.frame(stock_prices)
-  # stock_prices$Date <- rownames(stock_prices)
-  # stock_prices <- stock_prices[,c(1,4,7)]
-  
   stock_prices <- data.frame() 
   stock_returns <- data.frame() 
   
@@ -34,16 +28,20 @@ CorrelationMatrix <- function(ticker, cutoff = .8, start = Sys.Date() - 365, end
   {
     prices <- data.frame(getSymbols(stock, from = start, to = end, auto.assign = F, warnings = FALSE))
     prices$Date <- rownames(prices)
-    stock_prices <-  if(nrow(stock_prices) == 0) prices[,c(1,4,7)] else merge(stock_prices, prices[,c(1,4,7)], by = "Date")
+    stock_prices <-  if(nrow(stock_prices) == 0) prices[,c(4,7)] else merge(stock_prices, prices[,c(4,7)], by = "Date")
   }
-  closes <- stock_prices[,seq(from=3,to=ncol(stock_prices), by=2)]
-  stock_returns <- data.frame(t(matrix(unlist(lapply(closes, function(x) diff(x) / head(x, -1))), nrow=ncol(closes), byrow=F)))
+  closes <- stock_prices[,colnames(stock_prices) != 'Date']
+  if(class(closes) == "data.frame")
+    stock_returns <- data.frame(t(matrix(unlist(lapply(closes, function(x) diff(x) / head(x, -1))), nrow=ncol(closes), byrow=F)))
+  else
+    stock_returns <- data.frame(diff(closes) / head(closes, -1))
   
   colnames(stock_returns) <- similar_stocks
   correlations <- cor(stock_returns)
   basket <- colnames(correlations)[correlations[,ticker] >= abs(cutoff)]
   basket <- basket[basket != ticker]
 
+  
   #Create the returning list
   result <- list()
   result$prices <- stock_prices

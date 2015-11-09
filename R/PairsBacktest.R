@@ -15,6 +15,7 @@
 PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
                           startTrain = Sys.Date() - 365*2, endTrain = Sys.Date() - 365,
                           startTest = Sys.Date() - 365, endTest = Sys.Date()) {
+  print("chare")
   account_values <- c()
 
   #Get price data
@@ -33,7 +34,6 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
   b_train <- b_close[dates <= endTrain & dates >= startTrain]
 
   model <- lm(log(a_train) ~ log(b_train))
-  res <- as.vector(residuals(model))
   mean_resid <- mean(res)
   sd_resid <- sd(res)
   intercept <- model$coefficients[1]
@@ -94,6 +94,6 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
 
     account_values <- c(account_values, acct_val)
   }
-  return(data.frame(Date=testDates, account_values=account_values))
-
+  return(data.frame(Date=testDates, account_values=account_values, residuals=residual))
+  
 }
