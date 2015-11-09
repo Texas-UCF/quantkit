@@ -15,7 +15,7 @@
 PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
                           startTrain = Sys.Date() - 365*2, endTrain = Sys.Date() - 365,
                           startTest = Sys.Date() - 365, endTest = Sys.Date()) {
-  print("chare")
+  
   account_values <- c()
 
   #Get price data
@@ -51,6 +51,7 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
   b_num_shares <- 0
 
   testDates <- dates[dates <= endTest & dates >= startTest]
+  trainDates <- dates[dates <= endTrain & dates >= startTrain]
 
   a_short <- F
   hold <- F
@@ -94,6 +95,96 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
 
     account_values <- c(account_values, acct_val)
   }
-  return(data.frame(Date=testDates, account_values=account_values, residuals=residual))
+  
+  data <- data.frame(Date=testDates, account_values=account_values, residuals=residual)
+  data$Date = as.Date(data$Date)
+  
+  result <- list()
+  result$ticker1 <- ticker1
+  result$ticker2 <- ticker2
+  
+  result$data <- data
+  result$model <- model
+  result$lower_bound <- lower_bound
+  result$upper_bound <- upper_bound
+  
+  trainData <- stock_prices[stock_prices$Date %in% trainDates,]
+  testData <- stock_prices[stock_prices$Date %in% testDates,]
+  
+  colnames(trainData) <- c("Date", "a_train", "b_train")
+  colnames(testData) <- c("Date", "a_test", "b_test")
+  
+  trainData$a_train <- log(trainData$a_train)
+  trainData$b_train <- log(trainData$b_train)
+  testData$a_test <- log(testData$a_test)
+  testData$b_test <- log(testData$b_test)
+  
+  result$trainData <- trainData
+  result$testData <- testData
+  
+  result$model <- model
+  
+  return(result)
   
 }
+
+ggplotRegression <- function (fit) {
+  
+  require(ggplot2)
+  
+  ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+    geom_point() +
+    stat_smooth(method = "lm", col = "red") +
+    labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
+                       "Intercept =",signif(fit$coef[[1]],5 ),
+                       " Slope =",signif(fit$coef[[2]], 5),
+                       " P =",signif(summary(fit)$coef[2,4], 5)))
+}
+
+annualizeVolatility <- function(account_balances) {
+  returns <- diff(account_balances)/head(account_balances,-1)
+  return(sd(returns))*(sqrt(252))
+}
+
+annualizeReturns <- function(account_balances) {
+  returns <- diff(account_balances)/head(account_balances,-1)
+  returns <- returns + 1
+  compoundedRet <- prod(returns)
+  annualize = (compoundedRet^(252/length(returns)))
+  return(annualize - 1)
+}
+
+sharpeRatio <- function(account_balances) {
+  return(annualizeReturns(account_balances))/annualizeVolatility(account_balances)
+}
+
+backtest <- PairsBacktest('MSFT', 'AAPL')
+backtest_plot <- function(backtest){
+  data <- backtest$data
+  lower_bound <- backtest$lower_bound
+  upper_bound <- backtest$upper_bound
+  acct_vals <- data$account_values
+  summary_df=data.frame(Benchmark=c("Annualized Returns", "Annualized Volatility", "Sharpe Ratio"),
+                        Result=c(annualizeReturns(acct_vals), annualizeVolatility(acct_vals), sharpeRatio(acct_vals)))
+  
+  acct_plot <- ggplot(data, aes(x=Date, y=account_values)) + geom_line(size=1) + xlab("Date") + 
+    ylab("Account Values") + ggtitle("Account Value over Time") 
+  
+  summary_table <- tableGrob(summary_df, rows=NULL)
+  account_value_grid <- grid.arrange(acct_plot,summary_table, nrow=2, as.table=T)
+  
+  residuals_plot <- ggplot(data, aes(x=Date, y=residuals)) + geom_line(size=1) + xlab("Date") + ylab("Residual") + 
+    ggtitle("Residuals over Time") + 
+    geom_hline(yintercept=c(lower_bound, upper_bound), linetype='dashed', colour="#CC0000", size=2)
+  
+  regression_plot <- ggplot(data = backtest$trainData, aes(x=a_train, y=b_train)) +
+    geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+    geom_point()
+  
+  plot_list <- list()
+  plot_list$account_value_grid <- account_value_grid
+  plot_list$residuals_plot <- residuals_plot
+  plot_list$regression_plot <- regression_plot
+  return(plot_list)
+} 
+
