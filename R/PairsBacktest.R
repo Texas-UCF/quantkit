@@ -17,6 +17,7 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
                           startTest = Sys.Date() - 365, endTest = Sys.Date()) {
 
   account_values <- c()
+  trade_dates <- c()
 
   #Get price data
   stock_prices <- data.frame()
@@ -68,6 +69,7 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
         b_num_shares <- 0
 
         hold <- F
+        trade_dates <- c(trade_dates, testDates[r])
       }
     }
     else if(residual[r] < lower_bound){
@@ -78,6 +80,7 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
       capital <- -1 *(a_price[r] * a_num_shares) + capital
       a_short <- F
       hold <- T
+      trade_dates <- c(trade_dates, testDates[r])
     }
     else if(residual[r] > upper_bound){
       a_num_shares <- floor((capital / 2) / a_price[r])
@@ -87,6 +90,7 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
       capital <- -1 *(b_price[r] * b_num_shares) + capital
       a_short <- T
       hold <- T
+      trade_dates <- c(trade_dates, testDates[r])
     }
 
     if(a_short)
@@ -124,6 +128,8 @@ PairsBacktest <- function(ticker1, ticker2, capital = 100000, threshold = 1.5,
   result$testData <- testData
 
   result$model <- model
+  
+  result$tradeDates <- trade_dates
 
   return(result)
 
@@ -190,3 +196,19 @@ backtest_plot <- function(backtest){
   return(plot_list)
 }
 
+trade_dates <- function(backtest) {
+  require(gridExtra)
+  Date <- backtest$tradeDates
+  Position <- c()
+  for (i in 1:length(Date)) {
+    if (i%%2 == 0) {
+      Position <- c(Position,"Exit")
+    } else {
+      Position <- c(Position,"Enter")
+    }
+  }
+  
+  tab <- data.frame(Date, Position)
+  return(tab)
+  
+}
